@@ -62,6 +62,20 @@ def save_labeled_tree(args):
             json.dump(data, fw)
             fw.write("\n")
 
+def save_tree(tree):
+    tree = tree.strip()
+    action = get_actions(tree)
+    tags, sent, sent_lower = get_tags_tokens_lowercase(tree)
+    gold_span, binary_actions = get_nonbinary_spans_label(action)
+
+    tags = tags
+    sent = ' '.join(sent)
+    spans = [(a, b) for a, b, _ in gold_span]
+    labels = [l for _, _, l in gold_span] 
+
+    data = (sent, spans, labels, tags)
+    return data
+    
 if __name__ == '__main__':
     args = parser.parse_args()
     if args.binarize:

@@ -69,6 +69,28 @@ def main_remove_punct(args):
     empty_lines = remove_punct_io(args.ifile, args.ofile, tags)
     logger.info(empty_lines)
 
+def make_vocab(
+    args, min_len=0, max_len=150, vocab_size=10000, lowercase=True, replace_number=True
+):
+    indexer = Indexer(["<pad>","<unk>","<s>","</s>"])
+    num_sent = 0
+    sent_len = -1
+    for line in open(args.ifile, 'r'):
+        sent = json.loads(line.strip())[0].strip()
+        #print(sent)
+        if lowercase:
+            sent = sent.lower()
+        sent = [clean_number(w) if replace_number else w for w in sent.split()]
+        if len(sent) > max_len or len(sent) < min_len:
+            continue
+        num_sent += 1
+        sent_len = max(sent_len, len(sent))
+        for word in sent:
+            indexer.vocab[word] += 1
+    indexer.prune_vocab(vocab_size, False)
+    indexer.write_json(args.ofile)
+    echo(f"Vocab size: Original = {len(indexer.vocab)}, Pruned = {len(indexer.d)}")
+
 def main_make_vocab(
     args, min_len=0, max_len=150, vocab_size=10000, lowercase=True, replace_number=True
 ):

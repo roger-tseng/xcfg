@@ -40,6 +40,12 @@ class Indexer:
             out.write(" ".join([k, str(v)]) + "\n")
         out.close()
 
+    def write_json(self, outfile):
+        import json
+        out = open(outfile, "w")
+        json.dump(self.d, out)
+        out.close()
+
     def prune_vocab(self, k, cnt = False):
         vocab_list = [(word, count) for word, count in self.vocab.items()]
         if cnt:
@@ -84,7 +90,7 @@ def get_nonbinary_spans(actions, SHIFT = 0, REDUCE = 1):
             right = stack.pop()
             left = right
             n = 1
-            while stack[-1] is not '(':
+            while stack[-1] != '(':
                 left = stack.pop()
                 n += 1
             span = (left[0], right[1])
@@ -122,7 +128,7 @@ def get_nonbinary_spans_label(actions, SHIFT = 0, REDUCE = 1):
             right = stack.pop()
             left = right
             n = 1
-            while stack[-1][0] is not '(':
+            while stack[-1][0] != '(':
                 left = stack.pop()
                 n += 1
             span = (left[0], right[1], stack[-1][1:])
