@@ -92,7 +92,7 @@ def make_vocab(
     echo(f"Vocab size: Original = {len(indexer.vocab)}, Pruned = {len(indexer.d)}")
 
 def main_make_vocab(
-    args, min_len=0, max_len=150, vocab_size=10000, lowercase=True, replace_number=True
+    args, min_len=0, max_len=150, vocab_size=10000, lowercase=True, replace_number=True, write_json=False
 ):
     indexer = Indexer(["<pad>","<unk>","<s>","</s>"])
     num_sent = 0
@@ -109,7 +109,10 @@ def main_make_vocab(
         for word in sent:
             indexer.vocab[word] += 1
     indexer.prune_vocab(vocab_size, False)
-    indexer.write(args.ofile)
+    if write_json:
+        indexer.write_json(args.ofile)
+    else:
+        indexer.write(args.ofile)
     echo(f"Vocab size: Original = {len(indexer.vocab)}, Pruned = {len(indexer.d)}")
 
 if __name__ == '__main__':
